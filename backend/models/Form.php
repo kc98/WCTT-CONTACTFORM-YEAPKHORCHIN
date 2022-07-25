@@ -35,6 +35,7 @@ class Form extends \yii\db\ActiveRecord
             [['description'], 'string'],
             [['created_at'], 'integer'],
             [['name', 'email'], 'string', 'max' => 255],
+            [['email'], 'email'],
         ];
     }
 
