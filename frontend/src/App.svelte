@@ -2,15 +2,35 @@
 	import TextInput from "./components/Inputs/TextInput.svelte";
 	import EmailInput from "./components/Inputs/EmailInput.svelte";
 	import TextArea from "./components/Inputs/TextArea.svelte";
-	import ErrorAlert from "./components/Alerts/ErrorAlert.svelte";
+	import Alert from "./components/Alerts/Alert.svelte";
 	import Axios from "axios";
 
-	let name, email, description, message, errorAlert = false;
+	let name, email, description, message, alertVisible = false, isErrorAlert = true;
 
 	const onSubmit = async () => {
-		console.log(name,email,description);
-		errorAlert = !errorAlert;
-		let result =  Axios.post(
+		message = '';
+
+		// let response = await storeForm();
+		name = email = description = null;
+
+		// if (response.status != 201) {
+		// 	let data = response.data;
+		// 	data.forEach(item =>
+		// 		message += item.message + ' '
+		// 	);
+		// 	toggleAlertVisible();
+		// 	return;
+		// }
+
+		isErrorAlert = false;
+		message = 'Thank you for filling out your information!';
+
+		toggleAlertVisible();
+		return;
+	};
+
+	const storeForm = async () => {
+		return Axios.post(
             'http://localhost:8080/form',
             {name: name, email: email, description: description},
             {
@@ -19,17 +39,23 @@
                     Accept: "application/json",
                 },
             }
-        );
+        ).then(async (response) => {
+			return response;
+		}).catch((error) => {
+			return error.response;
+		});
+	}
 
-		console.log(result);
-	};
+	const toggleAlertVisible = () => {
+        alertVisible = !alertVisible;
+    }
 </script>
 
 <main>
 	<div class="container mx-auto max-w-xl px-12 py-8 my-8 rounded-xl bg-slate-100">
 		<h1 class="font-mono pb-3 text-center">Contact Us</h1>
 		<form class="contactForm" on:submit|preventDefault={onSubmit} id="contactForm">
-			<ErrorAlert message={message} visible={errorAlert} />
+			<Alert message={message} visible={alertVisible} closeAlert={toggleAlertVisible} isErrorAlert={isErrorAlert}/>
 			<TextInput inputName="name" bind:value={name}/>
 			<EmailInput inputName="email" bind:value={email}/>
 			<TextArea inputName="description" bind:value={description}/>
