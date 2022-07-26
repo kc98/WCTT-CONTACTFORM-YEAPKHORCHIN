@@ -368,6 +368,10 @@ var app = (function () {
         else
             dispatch_dev('SvelteDOMSetAttribute', { node, attribute, value });
     }
+    function prop_dev(node, property, value) {
+        node[property] = value;
+        dispatch_dev('SvelteDOMSetProperty', { node, property, value });
+    }
     function set_data_dev(text, data) {
         data = '' + data;
         if (text.wholeText === data)
@@ -427,13 +431,14 @@ var app = (function () {
     			input = element("input");
     			attr_dev(label, "class", "font-mono w-full");
     			attr_dev(label, "for", /*inputName*/ ctx[1]);
-    			add_location(label, file$4, 5, 4, 81);
+    			add_location(label, file$4, 5, 4, 91);
     			attr_dev(input, "class", "font-mono w-full");
     			attr_dev(input, "type", "text");
     			attr_dev(input, "name", /*inputName*/ ctx[1]);
-    			add_location(input, file$4, 6, 4, 201);
+    			input.required = /*required*/ ctx[2];
+    			add_location(input, file$4, 6, 4, 211);
     			attr_dev(div, "class", "py-2");
-    			add_location(div, file$4, 4, 0, 57);
+    			add_location(div, file$4, 4, 0, 67);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -448,7 +453,7 @@ var app = (function () {
     			set_input_value(input, /*value*/ ctx[0]);
 
     			if (!mounted) {
-    				dispose = listen_dev(input, "input", /*input_input_handler*/ ctx[2]);
+    				dispose = listen_dev(input, "input", /*input_input_handler*/ ctx[3]);
     				mounted = true;
     			}
     		},
@@ -461,6 +466,10 @@ var app = (function () {
 
     			if (dirty & /*inputName*/ 2) {
     				attr_dev(input, "name", /*inputName*/ ctx[1]);
+    			}
+
+    			if (dirty & /*required*/ 4) {
+    				prop_dev(input, "required", /*required*/ ctx[2]);
     			}
 
     			if (dirty & /*value*/ 1 && input.value !== /*value*/ ctx[0]) {
@@ -490,8 +499,8 @@ var app = (function () {
     function instance$4($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('TextInput', slots, []);
-    	let { inputName, value } = $$props;
-    	const writable_props = ['inputName', 'value'];
+    	let { inputName, value, required } = $$props;
+    	const writable_props = ['inputName', 'value', 'required'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<TextInput> was created with unknown prop '${key}'`);
@@ -505,26 +514,28 @@ var app = (function () {
     	$$self.$$set = $$props => {
     		if ('inputName' in $$props) $$invalidate(1, inputName = $$props.inputName);
     		if ('value' in $$props) $$invalidate(0, value = $$props.value);
+    		if ('required' in $$props) $$invalidate(2, required = $$props.required);
     	};
 
-    	$$self.$capture_state = () => ({ inputName, value });
+    	$$self.$capture_state = () => ({ inputName, value, required });
 
     	$$self.$inject_state = $$props => {
     		if ('inputName' in $$props) $$invalidate(1, inputName = $$props.inputName);
     		if ('value' in $$props) $$invalidate(0, value = $$props.value);
+    		if ('required' in $$props) $$invalidate(2, required = $$props.required);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [value, inputName, input_input_handler];
+    	return [value, inputName, required, input_input_handler];
     }
 
     class TextInput extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$4, create_fragment$4, safe_not_equal, { inputName: 1, value: 0 });
+    		init(this, options, instance$4, create_fragment$4, safe_not_equal, { inputName: 1, value: 0, required: 2 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -543,6 +554,10 @@ var app = (function () {
     		if (/*value*/ ctx[0] === undefined && !('value' in props)) {
     			console.warn("<TextInput> was created without expected prop 'value'");
     		}
+
+    		if (/*required*/ ctx[2] === undefined && !('required' in props)) {
+    			console.warn("<TextInput> was created without expected prop 'required'");
+    		}
     	}
 
     	get inputName() {
@@ -558,6 +573,14 @@ var app = (function () {
     	}
 
     	set value(value) {
+    		throw new Error("<TextInput>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get required() {
+    		throw new Error("<TextInput>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set required(value) {
     		throw new Error("<TextInput>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
@@ -587,13 +610,14 @@ var app = (function () {
     			input = element("input");
     			attr_dev(label, "class", "font-mono w-full");
     			attr_dev(label, "for", /*inputName*/ ctx[1]);
-    			add_location(label, file$3, 5, 4, 81);
+    			add_location(label, file$3, 5, 4, 91);
     			attr_dev(input, "class", "font-mono w-full");
     			attr_dev(input, "type", "email");
     			attr_dev(input, "name", /*inputName*/ ctx[1]);
-    			add_location(input, file$3, 6, 4, 201);
+    			input.required = /*required*/ ctx[2];
+    			add_location(input, file$3, 6, 4, 211);
     			attr_dev(div, "class", "py-2");
-    			add_location(div, file$3, 4, 0, 57);
+    			add_location(div, file$3, 4, 0, 67);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -608,7 +632,7 @@ var app = (function () {
     			set_input_value(input, /*value*/ ctx[0]);
 
     			if (!mounted) {
-    				dispose = listen_dev(input, "input", /*input_input_handler*/ ctx[2]);
+    				dispose = listen_dev(input, "input", /*input_input_handler*/ ctx[3]);
     				mounted = true;
     			}
     		},
@@ -621,6 +645,10 @@ var app = (function () {
 
     			if (dirty & /*inputName*/ 2) {
     				attr_dev(input, "name", /*inputName*/ ctx[1]);
+    			}
+
+    			if (dirty & /*required*/ 4) {
+    				prop_dev(input, "required", /*required*/ ctx[2]);
     			}
 
     			if (dirty & /*value*/ 1 && input.value !== /*value*/ ctx[0]) {
@@ -650,8 +678,8 @@ var app = (function () {
     function instance$3($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('EmailInput', slots, []);
-    	let { inputName, value } = $$props;
-    	const writable_props = ['inputName', 'value'];
+    	let { inputName, value, required } = $$props;
+    	const writable_props = ['inputName', 'value', 'required'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<EmailInput> was created with unknown prop '${key}'`);
@@ -665,26 +693,28 @@ var app = (function () {
     	$$self.$$set = $$props => {
     		if ('inputName' in $$props) $$invalidate(1, inputName = $$props.inputName);
     		if ('value' in $$props) $$invalidate(0, value = $$props.value);
+    		if ('required' in $$props) $$invalidate(2, required = $$props.required);
     	};
 
-    	$$self.$capture_state = () => ({ inputName, value });
+    	$$self.$capture_state = () => ({ inputName, value, required });
 
     	$$self.$inject_state = $$props => {
     		if ('inputName' in $$props) $$invalidate(1, inputName = $$props.inputName);
     		if ('value' in $$props) $$invalidate(0, value = $$props.value);
+    		if ('required' in $$props) $$invalidate(2, required = $$props.required);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [value, inputName, input_input_handler];
+    	return [value, inputName, required, input_input_handler];
     }
 
     class EmailInput extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$3, create_fragment$3, safe_not_equal, { inputName: 1, value: 0 });
+    		init(this, options, instance$3, create_fragment$3, safe_not_equal, { inputName: 1, value: 0, required: 2 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -703,6 +733,10 @@ var app = (function () {
     		if (/*value*/ ctx[0] === undefined && !('value' in props)) {
     			console.warn("<EmailInput> was created without expected prop 'value'");
     		}
+
+    		if (/*required*/ ctx[2] === undefined && !('required' in props)) {
+    			console.warn("<EmailInput> was created without expected prop 'required'");
+    		}
     	}
 
     	get inputName() {
@@ -718,6 +752,14 @@ var app = (function () {
     	}
 
     	set value(value) {
+    		throw new Error("<EmailInput>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get required() {
+    		throw new Error("<EmailInput>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set required(value) {
     		throw new Error("<EmailInput>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
@@ -747,13 +789,13 @@ var app = (function () {
     			textarea = element("textarea");
     			attr_dev(label, "class", "font-mono w-full");
     			attr_dev(label, "for", /*inputName*/ ctx[1]);
-    			add_location(label, file$2, 5, 4, 81);
+    			add_location(label, file$2, 5, 4, 91);
     			attr_dev(textarea, "class", "font-mono w-full");
     			attr_dev(textarea, "name", /*inputName*/ ctx[1]);
-    			textarea.required = true;
-    			add_location(textarea, file$2, 6, 4, 201);
+    			textarea.required = /*required*/ ctx[2];
+    			add_location(textarea, file$2, 6, 4, 211);
     			attr_dev(div, "class", "py-2");
-    			add_location(div, file$2, 4, 0, 57);
+    			add_location(div, file$2, 4, 0, 67);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -768,7 +810,7 @@ var app = (function () {
     			set_input_value(textarea, /*value*/ ctx[0]);
 
     			if (!mounted) {
-    				dispose = listen_dev(textarea, "input", /*textarea_input_handler*/ ctx[2]);
+    				dispose = listen_dev(textarea, "input", /*textarea_input_handler*/ ctx[3]);
     				mounted = true;
     			}
     		},
@@ -781,6 +823,10 @@ var app = (function () {
 
     			if (dirty & /*inputName*/ 2) {
     				attr_dev(textarea, "name", /*inputName*/ ctx[1]);
+    			}
+
+    			if (dirty & /*required*/ 4) {
+    				prop_dev(textarea, "required", /*required*/ ctx[2]);
     			}
 
     			if (dirty & /*value*/ 1) {
@@ -810,8 +856,8 @@ var app = (function () {
     function instance$2($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('TextArea', slots, []);
-    	let { inputName, value } = $$props;
-    	const writable_props = ['inputName', 'value'];
+    	let { inputName, value, required } = $$props;
+    	const writable_props = ['inputName', 'value', 'required'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<TextArea> was created with unknown prop '${key}'`);
@@ -825,26 +871,28 @@ var app = (function () {
     	$$self.$$set = $$props => {
     		if ('inputName' in $$props) $$invalidate(1, inputName = $$props.inputName);
     		if ('value' in $$props) $$invalidate(0, value = $$props.value);
+    		if ('required' in $$props) $$invalidate(2, required = $$props.required);
     	};
 
-    	$$self.$capture_state = () => ({ inputName, value });
+    	$$self.$capture_state = () => ({ inputName, value, required });
 
     	$$self.$inject_state = $$props => {
     		if ('inputName' in $$props) $$invalidate(1, inputName = $$props.inputName);
     		if ('value' in $$props) $$invalidate(0, value = $$props.value);
+    		if ('required' in $$props) $$invalidate(2, required = $$props.required);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [value, inputName, textarea_input_handler];
+    	return [value, inputName, required, textarea_input_handler];
     }
 
     class TextArea extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$2, create_fragment$2, safe_not_equal, { inputName: 1, value: 0 });
+    		init(this, options, instance$2, create_fragment$2, safe_not_equal, { inputName: 1, value: 0, required: 2 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -863,6 +911,10 @@ var app = (function () {
     		if (/*value*/ ctx[0] === undefined && !('value' in props)) {
     			console.warn("<TextArea> was created without expected prop 'value'");
     		}
+
+    		if (/*required*/ ctx[2] === undefined && !('required' in props)) {
+    			console.warn("<TextArea> was created without expected prop 'required'");
+    		}
     	}
 
     	get inputName() {
@@ -878,6 +930,14 @@ var app = (function () {
     	}
 
     	set value(value) {
+    		throw new Error("<TextArea>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get required() {
+    		throw new Error("<TextArea>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set required(value) {
     		throw new Error("<TextArea>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
@@ -3180,7 +3240,7 @@ var app = (function () {
     	let h1;
     	let t1;
     	let form;
-    	let alert;
+    	let alert_1;
     	let t2;
     	let textinput;
     	let updating_value;
@@ -3196,7 +3256,7 @@ var app = (function () {
     	let mounted;
     	let dispose;
 
-    	alert = new Alert({
+    	alert_1 = new Alert({
     			props: {
     				message: /*message*/ ctx[3],
     				visible: /*alertVisible*/ ctx[4],
@@ -3212,7 +3272,7 @@ var app = (function () {
     		/*textinput_value_binding*/ ctx[10](value);
     	}
 
-    	let textinput_props = { inputName: "name" };
+    	let textinput_props = { inputName: "name", required: true };
 
     	if (/*name*/ ctx[0] !== void 0) {
     		textinput_props.value = /*name*/ ctx[0];
@@ -3225,7 +3285,7 @@ var app = (function () {
     		/*emailinput_value_binding*/ ctx[11](value);
     	}
 
-    	let emailinput_props = { inputName: "email" };
+    	let emailinput_props = { inputName: "email", required: true };
 
     	if (/*email*/ ctx[1] !== void 0) {
     		emailinput_props.value = /*email*/ ctx[1];
@@ -3238,7 +3298,7 @@ var app = (function () {
     		/*textarea_value_binding*/ ctx[12](value);
     	}
 
-    	let textarea_props = { inputName: "description" };
+    	let textarea_props = { inputName: "description", required: true };
 
     	if (/*description*/ ctx[2] !== void 0) {
     		textarea_props.value = /*description*/ ctx[2];
@@ -3255,7 +3315,7 @@ var app = (function () {
     			h1.textContent = "Contact Us";
     			t1 = space();
     			form = element("form");
-    			create_component(alert.$$.fragment);
+    			create_component(alert_1.$$.fragment);
     			t2 = space();
     			create_component(textinput.$$.fragment);
     			t3 = space();
@@ -3266,17 +3326,17 @@ var app = (function () {
     			button = element("button");
     			button.textContent = "Submit";
     			attr_dev(h1, "class", "font-mono pb-3 text-center");
-    			add_location(h1, file, 61, 2, 1727);
+    			add_location(h1, file, 65, 2, 1751);
     			attr_dev(button, "type", "submit");
     			attr_dev(button, "id", "submitButton");
     			attr_dev(button, "class", "inline-block my-2 px-6 py-3 w-full bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out");
-    			add_location(button, file, 67, 3, 2209);
+    			add_location(button, file, 71, 3, 2260);
     			attr_dev(form, "class", "contactForm");
     			attr_dev(form, "id", "contactForm");
-    			add_location(form, file, 62, 2, 1785);
+    			add_location(form, file, 66, 2, 1809);
     			attr_dev(div, "class", "container mx-auto max-w-xl px-12 py-8 my-8 rounded-xl bg-slate-100");
-    			add_location(div, file, 60, 1, 1643);
-    			add_location(main, file, 59, 0, 1634);
+    			add_location(div, file, 64, 1, 1667);
+    			add_location(main, file, 63, 0, 1658);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -3287,7 +3347,7 @@ var app = (function () {
     			append_dev(div, h1);
     			append_dev(div, t1);
     			append_dev(div, form);
-    			mount_component(alert, form, null);
+    			mount_component(alert_1, form, null);
     			append_dev(form, t2);
     			mount_component(textinput, form, null);
     			append_dev(form, t3);
@@ -3304,13 +3364,13 @@ var app = (function () {
     			}
     		},
     		p: function update(ctx, [dirty]) {
-    			const alert_changes = {};
-    			if (dirty & /*message*/ 8) alert_changes.message = /*message*/ ctx[3];
-    			if (dirty & /*alertVisible*/ 16) alert_changes.visible = /*alertVisible*/ ctx[4];
-    			if (dirty & /*isErrorAlert*/ 128) alert_changes.isErrorAlert = /*isErrorAlert*/ ctx[7];
-    			if (dirty & /*containerStyle*/ 32) alert_changes.containerStyle = /*containerStyle*/ ctx[5];
-    			if (dirty & /*textStyle*/ 64) alert_changes.textStyle = /*textStyle*/ ctx[6];
-    			alert.$set(alert_changes);
+    			const alert_1_changes = {};
+    			if (dirty & /*message*/ 8) alert_1_changes.message = /*message*/ ctx[3];
+    			if (dirty & /*alertVisible*/ 16) alert_1_changes.visible = /*alertVisible*/ ctx[4];
+    			if (dirty & /*isErrorAlert*/ 128) alert_1_changes.isErrorAlert = /*isErrorAlert*/ ctx[7];
+    			if (dirty & /*containerStyle*/ 32) alert_1_changes.containerStyle = /*containerStyle*/ ctx[5];
+    			if (dirty & /*textStyle*/ 64) alert_1_changes.textStyle = /*textStyle*/ ctx[6];
+    			alert_1.$set(alert_1_changes);
     			const textinput_changes = {};
 
     			if (!updating_value && dirty & /*name*/ 1) {
@@ -3341,14 +3401,14 @@ var app = (function () {
     		},
     		i: function intro(local) {
     			if (current) return;
-    			transition_in(alert.$$.fragment, local);
+    			transition_in(alert_1.$$.fragment, local);
     			transition_in(textinput.$$.fragment, local);
     			transition_in(emailinput.$$.fragment, local);
     			transition_in(textarea.$$.fragment, local);
     			current = true;
     		},
     		o: function outro(local) {
-    			transition_out(alert.$$.fragment, local);
+    			transition_out(alert_1.$$.fragment, local);
     			transition_out(textinput.$$.fragment, local);
     			transition_out(emailinput.$$.fragment, local);
     			transition_out(textarea.$$.fragment, local);
@@ -3356,7 +3416,7 @@ var app = (function () {
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(main);
-    			destroy_component(alert);
+    			destroy_component(alert_1);
     			destroy_component(textinput);
     			destroy_component(emailinput);
     			destroy_component(textarea);
@@ -3396,7 +3456,13 @@ var app = (function () {
 
     		if (response.status != 201) {
     			let data = response.data;
-    			data.forEach(item => $$invalidate(3, message += item.message + ' '));
+
+    			if (data) {
+    				data.forEach(item => $$invalidate(3, message += item.message + ' '));
+    			} else {
+    				alert(response);
+    			}
+
     			$$invalidate(5, containerStyle = "bg-red-100 border-red-400 text-red-700");
     			$$invalidate(6, textStyle = "text-red-500");
     			toggleAlertVisible();
@@ -3455,7 +3521,6 @@ var app = (function () {
     		TextArea,
     		Alert,
     		Axios: axios,
-    		text,
     		name,
     		email,
     		description,
