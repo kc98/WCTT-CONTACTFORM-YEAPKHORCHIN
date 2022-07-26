@@ -4,7 +4,6 @@
 	import TextArea from "./components/Inputs/TextArea.svelte";
 	import Alert from "./components/Alerts/Alert.svelte";
 	import Axios from "axios";
-import { text } from "svelte/internal";
 
 	let name, email, description, message, alertVisible = false, containerStyle, textStyle, isErrorAlert = true;
 
@@ -16,9 +15,14 @@ import { text } from "svelte/internal";
 
 		if (response.status != 201) {
 			let data = response.data;
-			data.forEach(item =>
-				message += item.message + ' '
-			);
+			if (data) {
+				data.forEach(item =>
+					message += item.message + ' '
+				);
+			} else {
+				alert(response);
+			}
+			
 
 			containerStyle = "bg-red-100 border-red-400 text-red-700";
     		textStyle = "text-red-500";
@@ -62,9 +66,9 @@ import { text } from "svelte/internal";
 		<h1 class="font-mono pb-3 text-center">Contact Us</h1>
 		<form class="contactForm" on:submit|preventDefault={onSubmit} id="contactForm">
 			<Alert message={message} visible={alertVisible} closeAlert={toggleAlertVisible} isErrorAlert={isErrorAlert} containerStyle={containerStyle} textStyle={textStyle}/>
-			<TextInput inputName="name" bind:value={name}/>
-			<EmailInput inputName="email" bind:value={email}/>
-			<TextArea inputName="description" bind:value={description}/>
+			<TextInput inputName="name" bind:value={name} required/>
+			<EmailInput inputName="email" bind:value={email} required/>
+			<TextArea inputName="description" bind:value={description} required/>
 			<button type="submit" id="submitButton" class="inline-block my-2 px-6 py-3 w-full bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Submit</button>
 		</form>
 	</div>
