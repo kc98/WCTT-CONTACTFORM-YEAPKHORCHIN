@@ -4,25 +4,31 @@
 	import TextArea from "./components/Inputs/TextArea.svelte";
 	import Alert from "./components/Alerts/Alert.svelte";
 	import Axios from "axios";
+import { text } from "svelte/internal";
 
-	let name, email, description, message, alertVisible = false, isErrorAlert = true;
+	let name, email, description, message, alertVisible = false, containerStyle, textStyle, isErrorAlert = true;
 
 	const onSubmit = async () => {
 		message = '';
 
-		// let response = await storeForm();
+		let response = await storeForm();
 		name = email = description = null;
 
-		// if (response.status != 201) {
-		// 	let data = response.data;
-		// 	data.forEach(item =>
-		// 		message += item.message + ' '
-		// 	);
-		// 	toggleAlertVisible();
-		// 	return;
-		// }
+		if (response.status != 201) {
+			let data = response.data;
+			data.forEach(item =>
+				message += item.message + ' '
+			);
+
+			containerStyle = "bg-red-100 border-red-400 text-red-700";
+    		textStyle = "text-red-500";
+			toggleAlertVisible();
+			return;
+		}
 
 		isErrorAlert = false;
+		containerStyle = "bg-teal-100 border-teal-500 text-teal-900";
+      	textStyle = "text-teal-500";
 		message = 'Thank you for filling out your information!';
 
 		toggleAlertVisible();
@@ -55,7 +61,7 @@
 	<div class="container mx-auto max-w-xl px-12 py-8 my-8 rounded-xl bg-slate-100">
 		<h1 class="font-mono pb-3 text-center">Contact Us</h1>
 		<form class="contactForm" on:submit|preventDefault={onSubmit} id="contactForm">
-			<Alert message={message} visible={alertVisible} closeAlert={toggleAlertVisible} isErrorAlert={isErrorAlert}/>
+			<Alert message={message} visible={alertVisible} closeAlert={toggleAlertVisible} isErrorAlert={isErrorAlert} containerStyle={containerStyle} textStyle={textStyle}/>
 			<TextInput inputName="name" bind:value={name}/>
 			<EmailInput inputName="email" bind:value={email}/>
 			<TextArea inputName="description" bind:value={description}/>

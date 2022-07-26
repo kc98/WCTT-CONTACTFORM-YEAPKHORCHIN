@@ -1,13 +1,5 @@
 <script>
-    export let message, visible = false, closeAlert, isErrorAlert = false;
-
-    let containerStyle = "bg-red-100 border-red-400 text-red-700";
-    let textStyle = "text-red-500";
-
-    if (!isErrorAlert) {
-      containerStyle = "bg-teal-100 border-teal-500 text-teal-900";
-      textStyle = "text-teal-500";
-    }
+    export var message, visible = false, closeAlert, containerStyle, textStyle;
 </script>
 
 {#if visible}
